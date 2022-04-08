@@ -249,6 +249,8 @@ type VRFSpecParams struct {
 	RequestTimeout                time.Duration
 	V2                            bool
 	ChunkSize                     int
+	BackoffInitialDelay           time.Duration
+	BackoffMaxDelay               time.Duration
 }
 
 type VRFSpec struct {
@@ -360,6 +362,8 @@ requestedConfsDelay = %d
 requestTimeout = "%s"
 publicKey = "%s"
 chunkSize = %d
+backoffInitialDelay = "%s"
+backoffMaxDelay = "%s"
 observationSource = """
 %s
 """
@@ -367,8 +371,8 @@ observationSource = """
 	toml := fmt.Sprintf(template,
 		jobID, name, coordinatorAddress, batchCoordinatorAddress,
 		params.BatchFulfillmentEnabled, strconv.FormatFloat(batchFulfillmentGasMultiplier, 'f', 2, 64),
-		confirmations, params.RequestedConfsDelay,
-		requestTimeout.String(), publicKey, chunkSize, observationSource)
+		confirmations, params.RequestedConfsDelay, requestTimeout.String(), publicKey, chunkSize,
+		params.BackoffInitialDelay.String(), params.BackoffMaxDelay.String(), observationSource)
 	if len(params.FromAddresses) != 0 {
 		var addresses []string
 		for _, address := range params.FromAddresses {
@@ -389,6 +393,8 @@ observationSource = """
 		RequestedConfsDelay:      params.RequestedConfsDelay,
 		RequestTimeout:           requestTimeout,
 		ChunkSize:                chunkSize,
+		BackoffInitialDelay:      params.BackoffInitialDelay,
+		BackoffMaxDelay:          params.BackoffMaxDelay,
 	}, toml: toml}
 }
 
